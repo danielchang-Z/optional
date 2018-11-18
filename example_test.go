@@ -8,16 +8,37 @@ func ExampleAbsent() {
 	opt := Absent()
 	fmt.Println(opt)
 
+	val := opt.Or(1)
+	fmt.Println("val:", val)
+
+	opt.Substitute(Of(10)).
+		IfPresent(func(i interface{}) {
+			fmt.Printf("I am a consumer and will consume the value[%v].\n", i)
+		})
+
 	// Example output:
 	// &{}
+	// val:1
+	// I am a consumer and will consume the value[10].
 }
 
 func ExampleOf() {
 	opt := Of(1)
 	fmt.Println(opt)
 
+	val := opt.Or(10)
+	fmt.Println("val:", val)
+
+	sum := opt.Transform(
+		func(i interface{}) interface{} {
+			return i.(int) + i.(int)
+		}).Get()
+	fmt.Println("sum:", sum)
+
 	// Example output:
 	// &{1}
+	// val:10
+	// sum:2
 }
 
 func ExampleOfNilable() {
@@ -26,9 +47,21 @@ func ExampleOfNilable() {
 	opt2 := OfNilable(nil)
 	fmt.Println("opt2: ", opt2)
 
+	consumer := func(i interface{}) {
+		fmt.Printf("I am a consumer and will consume the value[%v].\n", i)
+	}
+	worker := func() {
+		fmt.Println("I am a worker.")
+	}
+
+	opt1.IfPresentOrElse(consumer, worker)
+	opt2.IfPresentOrElse(consumer, worker)
+
 	// Example output:
 	// opt1:  &{1}
 	// opt2:  &{}
+	// I am a consumer and will consume the value[1].
+	// I am a worker.
 }
 
 func ExampleOptional_IsPresent() {

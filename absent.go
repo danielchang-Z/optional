@@ -19,7 +19,7 @@ func (o *absent) IsAbsent() bool {
 }
 
 func (o *absent) Get() interface{} {
-	panic(errors.Wrap(ErrIllegalStatus, "Optional.get() cannot be called on an absent value"))
+	panic(errors.Wrap(&illegalStatusError{}, "Optional.get() cannot be called on an absent value"))
 }
 
 func (o *absent) Or(defaultValue interface{}) interface{} {

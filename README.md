@@ -1,5 +1,8 @@
 # Optional
+
 Optional is a wrapper for representing 'optional' (or 'nullable') objects who may not (yet) contain a valid value.
+
+[https://godoc.org/github.com/danielzhangy/optional](https://godoc.org/github.com/danielzhangy/optional)
 
 `go get -u github.com/danielzhangy/optional`
 
@@ -53,6 +56,8 @@ fmt.Println("opt2: ", opt2)
 // opt1:  &{1}
 // opt2:  &{}
 ```
+
+[Read the package documentation for more information.](https://godoc.org/github.com/danielzhangy/optional)
 
 # Contributing
 We welcome pull requests, bug fixes and issue reports. With that said, the bar for adding new symbols to this package is intentionally set high.

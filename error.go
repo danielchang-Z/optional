@@ -4,23 +4,49 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	// ErrIllegalStatus signals that a method has been invoked at an illegal or inappropriate time.
-	ErrIllegalStatus = errors.New("illegal status")
-	// ErrNilPointer indicates error is happened when an application attempts to use nil in a case where an object is required.
-	ErrNilPointer = errors.New("nil pointer")
-)
+// The RuntimeError interface identifies a run time error.
+type RuntimeError interface {
+	error
+
+	// runtimeError is a no-op function but serves to distinguish types
+	// that are run time errors from ordinary errors.
+	runtimeError()
+}
+
+// IsRuntimeError indicates whether an error is RuntimeError type.
+func IsRuntimeError(err error) bool {
+	_, ok := err.(RuntimeError)
+	return ok
+}
+
+type illegalStatusError struct{}
+
+func (e *illegalStatusError) Error() string {
+	return "illegal status"
+}
+
+func (e *illegalStatusError) runtimeError() {}
+
+type nilPointerError struct{}
+
+func (e *nilPointerError) Error() string {
+	return "nil point"
+}
+
+func (e *nilPointerError) runtimeError() {}
 
 func checkNotNil(value interface{}) interface{} {
-	if value == nil {
-		panic(ErrNilPointer)
-	}
-	return value
+	return checkNotNilWithMessage(value, "")
 }
 
 func checkNotNilWithMessage(value interface{}, errorMessage string) interface{} {
 	if value == nil {
-		panic(errors.Wrap(ErrNilPointer, errorMessage))
+		panic(errors.Wrap(&nilPointerError{}, errorMessage))
 	}
 	return value
+}
+
+// IsCausedByRuntimeError indicates whether an error is caused by RuntimeError.
+func IsCausedByRuntimeError(err error) bool {
+	return IsRuntimeError(errors.Cause(err))
 }
